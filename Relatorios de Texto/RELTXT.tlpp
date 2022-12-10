@@ -1,0 +1,98 @@
+#INCLUDE 'Protheus.ch'
+#INCLUDE 'TOPCONN.ch'
+
+
+/*/{Protheus.doc} RELTXT
+User function que cria um relatório de texto
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 07/12/2022
+@see https://tdn.totvs.com/pages/releaseview.action?pageId=24347000
+@see https://solutio.inf.br/processa/
+@see https://terminaldeinformacao.com/knowledgebase/msaguarde/
+/*/
+User Function RELTXT()
+
+/* Função MsgYesNo exibe uma mensagem na tela com a opção Sim ou Não, caso o ususário
+selecione sim, a função retorna .T., caso não, retorna .F.*/
+IF MsgYesNo("Deseja criar o documento do relatório ?", "Relatorio de Texto")
+
+    Processa({||DATABASECONSULT()},,"Processando...")
+    MsAguarde({|| CREATEDOC()},,"O arquivo TXT está sendo gerado...")
+
+ELSE
+
+    Alert("Cancelado pelo operador")
+
+ENDIF
+
+return Nil
+
+
+/*/{Protheus.doc} DATABASECONSULT
+funcao que realiza a consulta no banco de dados
+@type function
+@version  1.0
+@author josue
+@since 09/12/2022
+@see https://tdn.totvs.com/display/tec/DBUseArea
+@see https://tdn.totvs.com/display/tec/TCGenQry
+/*/
+Static function DATABASECONSULT()
+
+Local cQuery := ""
+
+cQuery := " SELECT B.B1_FILIAL AS FILIAL, B.B1_COD AS CODIGO, "
+cQuery += " B.B1_DESC AS DESCRICAO "
+cQuery += " FROM SB1990 B WHERE B.D_E_L_E_T_ = ''"
+
+cQuery := ChangeQuery(cQuery)
+    DbUseArea(.T., "TOPCONN", TCGENQRY(,,cQuery), 'TMP',.F.,.T.)
+
+return Nil
+
+
+/*/{Protheus.doc} nomeStaticFunction
+Função que cria o arquivo TXT
+@type function
+@version  1.0
+@author Josué Oliveira
+@since 06/12/2022
+@see https://tdn.totvs.com/display/tec/FCreate
+@see https://tdn.totvs.com/display/tec/FWrite
+@see https://tdn.totvs.com/display/tec/StrZero
+@see https://tdn.totvs.com/display/tec/File
+@see https://tdn.totvs.com/display/tec/DBSkip
+/*/
+Static Function CREATEDOC()
+
+//Variavel que armazena o diretorio onde o relatorio sera criado.
+Local cDir := "C:\TOTVS12133\Relatorios\"
+
+//Variavel que define o nome do arquivo
+Local cArq := "relatorio.txt"
+
+// Variavel que recebe a função FCreate que cria o arquivo txt
+Local nHandle := FCreate(cDir + cArq)
+
+    If nHandle < 0
+        MsgAlert("Erro ao criar o arquivo","ERRO")
+    Else
+       While TMP -> (!EOF())
+
+            FWrite(nHandle, TMP->(FILIAL)+ " | " + TMP->(CODIGO) + " | " + TMP->(DESCRICAO) + CRLF) //a variavel CRLF é utilizada para pular linha
+            TMP -> (dbSkip()) //Desloca para outro registro na tabela corrente.
+
+        EndDo
+            FClose(nHandle) //Função que fecha o arquivo, é uma função que sempre deve ser utilizad após o FWrite
+    EndIf
+        
+    // Bloco que verifica se o arquivo foi criado
+    If File("C:\TOTVS12133\Relatorios\relatorio.txt")
+        MsgInfo("Arquivo criado com sucesso!")
+    Else
+        MsgAlert("Não foi possível criar o arquivo","ALERTA")
+    EndIf
+
+Return

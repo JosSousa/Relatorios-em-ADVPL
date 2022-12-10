@@ -1,0 +1,54 @@
+#INCLUDE 'Protheus.ch'
+#INCLUDE 'TOPCONN.ch'
+
+/*/{Protheus.doc} RELTREPORT
+Relatorio utilizando o TReport
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 10/12/2022
+@see https://terminaldeinformacao.com/knowledgebase/getnextalias/
+@see https://tdn.totvs.com/display/public/framework/TReport
+@see 
+/*/
+
+User Function RELTREPORT()
+    
+    Local oReport
+    Local cAlias := GetNextAlias() //Funcao para pegar o proximo alias disponivel
+
+Return
+
+
+/*/{Protheus.doc} QUERYBUILD
+Funcao que monta a query
+@type function
+@version  1.0
+@author Josue Oliveira 
+@since 10/12/2022
+@see https://terminaldeinformacao.com/knowledgebase/beginsql-endsql/
+@seer https://tdn.totvs.com/pages/releaseview.action?pageId=24347039
+/*/
+
+Static Function QUERYBUILD(oReport,cAlias)
+
+    Local oSecao1 := oReport:Section(1)
+
+    oSecao1:BeginQuery()
+
+        BEGINSQL Alias cAlias
+
+            SELECT  B.B1_FILIAL AS FILIAL, 
+                    B.B1_COD AS CODIGO, 
+                    B.B1_DESC AS DESCRICAO
+                    FROM %Table:SB1% B 
+                    WHERE B.D_E_L_E_T_ = ''
+
+        ENDSQL
+
+    oSecao1:EndQuery()
+    oReport:SetMeter((cAlias) -> (RecCount()))
+
+    oSecao1:Print()
+
+Return
