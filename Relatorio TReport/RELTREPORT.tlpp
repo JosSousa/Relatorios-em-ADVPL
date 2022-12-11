@@ -17,6 +17,10 @@ User Function RELTREPORT()
     Local oReport
     Local cAlias := GetNextAlias() //Funcao para pegar o proximo alias disponivel
 
+    oReport := STRUCTUREBUILDER(cAlias)
+
+    oReport:printDialog()
+
 Return
 
 
@@ -52,3 +56,31 @@ Static Function QUERYBUILD(oReport,cAlias)
     oSecao1:Print()
 
 Return
+
+
+/*/{Protheus.doc} STRUCTUREBUILDER
+Funcao que cria a estrutura do relaorio
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 10/12/2022
+@see https://tdn.totvs.com/display/public/framework/TRSection
+/*/
+Static Function STRUCTUREBUILDER(cAlias)
+
+    Local cTitle   := "Relatorio de produtos"
+    Local cHelp     := "Permite imprimir relatório de produtos"
+    Local oReport   
+    Local oSection1
+
+    //Instanciando a classe TReport
+    oReport := TReport():New('RELTREPORT',cTitle,/**/,{|oReport| QUERYBUILD(oReport,cAlias)},cHelp)
+    
+    //Secao
+    oSection1 := TRSection():New(oReport, "Produtos", {"SB1"})
+    TRCell():New(oSection1,"FILIAL",   "SB1","Filial")
+    TRCell():New(oSection1,"CODIGO",   "SB1","Codigo")
+    TRCell():New(oSection1,"DESCRICAO","SB1","Descricao")
+
+
+return oReport
