@@ -3,7 +3,7 @@
 
 
 /*/{Protheus.doc} ADVTREPORT
-Relatorio TReport avancado, aplicando os conceitos
+Criando relatorio TReport avancado, aplicando os conceitos
 de perguntas criadas no configurador.
 @type function
 @version  1.0
@@ -19,3 +19,20 @@ User Function ADVTREPORT()
     Pergunte(cAsk,.T.) //Funcao para inicializar a pergunta.
 
 return
+
+
+/*/{Protheus.doc} QUERYBUILDER
+Funcao que estrutura query SQL
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 12/12/2022
+@see https://tdn.totvs.com/display/public/framework/TReport
+/*/
+Static Function QUERYBUILDER(oReport)
+    Local oSection1 := oReport:Section(1)
+    Local oSection2 := oReport:Section(2)
+    Local cQuery := ""
+
+
+Return
