@@ -1,0 +1,21 @@
+#INCLUDE 'Protheus.ch'
+#INCLUDE 'TOPCONN.ch'
+
+
+/*/{Protheus.doc} ADVTREPORT
+Relatorio TReport avancado, aplicando os conceitos
+de perguntas criadas no configurador.
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 11/12/2022
+@see https://solutio.inf.br/pergunte/
+/*/
+User Function ADVTREPORT()
+
+    Local oReport := NIL
+    Local cAsk := "ADVTREPORT" //Variavel que recebe a pergunta criada no configurador.
+
+    Pergunte(cAsk,.T.) //Funcao para inicializar a pergunta.
+
+return
