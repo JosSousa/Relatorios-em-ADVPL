@@ -23,8 +23,8 @@ User Function RELTREPORT()
 Return
 
 
-/*/{Protheus.doc} QUERYBUILD
-Funcao que monta a query
+/*/{Protheus.doc} QUERYBUILDER
+Funcao que estrutura a Query SQL
 @type function
 @version  1.0
 @author Josue Oliveira 
@@ -33,7 +33,7 @@ Funcao que monta a query
 @seer https://tdn.totvs.com/pages/releaseview.action?pageId=24347039
 /*/
 
-Static Function QUERYBUILD(oReport,cAlias)
+Static Function QUERYBUILDER(oReport,cAlias)
 
     Local oSecao1 := oReport:Section(1)
 
@@ -74,7 +74,7 @@ Static Function STRUCTUREBUILDER(cAlias)
     Local oSection1
 
     //Instanciando a classe TReport
-    oReport := TReport():New('RELTREPORT',cTitle,/**/,{|oReport| QUERYBUILD(oReport,cAlias)},cHelp)
+    oReport := TReport():New('RELTREPORT',cTitle,/**/,{|oReport| QUERYBUILDER(oReport,cAlias)},cHelp)
     
     //Secao
     oSection1 := TRSection():New(oReport, "Produtos", {"SB1"})
