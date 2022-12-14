@@ -28,11 +28,90 @@ Funcao que estrutura query SQL
 @author Josue Oliveira
 @since 12/12/2022
 @see https://tdn.totvs.com/display/public/framework/TReport
+@see https://tdn.totvs.com/display/tec/DBGoTop
+@see https://masteradvpl.com.br/index.php/forum/loboguara/17831-dbselectarea
+@see https://tdn.totvs.com/display/tec/DBCloseArea
+@see https://tdn.totvs.com/display/tec/TMSPrinter -> Filre por Cancel
+@see https://terminaldeinformacao.com/knowledgebase/incproc/
+@see https://solutio.inf.br/dbskip/
 /*/
 Static Function QUERYBUILDER(oReport)
     Local oSection1 := oReport:Section(1)
     Local oSection2 := oReport:Section(2)
     Local cQuery := ""
+    Local cNumCod := ""
 
+
+    cQuery := " SELECT A1_COD,A1_NOME,C5_NUM,C6_QTDVEN,C6_PRCVEN,B1_DESC "   
+   	cQuery += " FROM SA1990 SA1, SC5990 SC5, SC6990 SC6, SB1990 SB1 "
+   	cQuery += " WHERE SA1.D_E_L_E_T_ = '' AND "
+    cQuery += " C5_FILIAL = '"+MV_PAR01+"' AND SC5.D_E_L_E_T_ = '' AND C5_CLIENTE = A1_COD AND "
+   	cQuery += " C6_FILIAL = '"+MV_PAR01+"' AND SC6.D_E_L_E_T_ = '' AND C6_NUM = C5_NUM AND "
+   	cQuery += " B1_FILIAL = '"+MV_PAR01+"' AND SB1.D_E_L_E_T_ = '' AND B1_COD = C6_PRODUTO "  
+    cQuery += " ORDER BY A1_FILIAL,A1_COD,C5_FILIAL,C5_NUM,C6_FILIAL,C6_ITEM "
+
+    //Verifica se a tabela já está aberta.
+    IF SELECT("TEMP") <> 0
+        DbSelectArea("TEMP")
+        DbCloseArea()
+    ENDIF
+
+    /*Envia os dados da cQuery para o alias temporario
+    chamado "TEMP", ou seja, cria uma tabela temporária*/
+    TCQUERY cQuery Alias "TEMP"
+
+    DbSelectArea("TEMP")
+    TEMP -> (dbGoTop())
+
+    oReport:SetMeter(TEMP -> (LastRec()))
+
+    While !EOF()
+        IF oReport:Cancel()
+            Exit   //Se o usuario cancelar, ele entra na condicao e para a execusao.
+        EndIf
+
+        //inicia a primeira secao
+        oSection1:Init() //Funcao de inicializacao
+        oReport:IncMeter()
+
+        cNumCod := TEMP -> A1_COD
+        IncProc("Imprimindo cliente " + AllTrim(TEMP -> A1_COD))
+
+        //Imprimindo primeira secao
+        oSection1:Cell("A1_COD"):SetValue(TEMP -> A1_COD)
+        oSection1:Cell("A1_NOME"):SetValue(TEMP -> A1_NOME)
+        oSection1:PrintLine() //Imprime a linha baseado nas celulas acima
+
+        //Iniciando a segunda secao
+        oSection2:Init()
+        oReport:IncMeter()
+
+        //Verifica se o codigo do cliente é o mesmo, se sim, imprime os dados do pedido.
+        While TEMP -> A1_COD == cNumCod
+            oReport:IncMeter()
+
+            IncProc("Imprimindo pedido..." +AllTrim(TEMP -> C5_NUM))
+            oSection2:Cell("C5_NUM"):SetValue(TEMP -> C5_NUM)
+            oSection2:Cell("B1_DESC"):SetValue(TEMP -> B1_DESC)
+            oSection2:Cell("C6_PRCVEN"):SetValue(TEMP -> C6_PRCVEN)
+            oSection2:Cell("C6_QTDVEN"):SetValue(TEMP -> C6_QTDVEN)
+
+            TEMP -> (dbSkip())
+        EndDo
+
+        oSection2:Finish()
+
+    EndDO
 
 Return
+
+Static function STRUCTUREBUILDER(cNome)
+    Local oReport   := NIL
+    Local oSection1 := NIL
+    Local oSection2 := NIL
+
+    oReport := TReport():New(cNome)
+
+
+
+return oReport
