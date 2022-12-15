@@ -18,6 +18,9 @@ User Function ADVTREPORT()
 
     Pergunte(cAsk,.T.) //Funcao para inicializar a pergunta.
 
+    oReport := STRUCTUREBUILDER(cAsk)
+    oReport:PrintDialog()
+
 return
 
 
@@ -105,13 +108,33 @@ Static Function QUERYBUILDER(oReport)
 
 Return
 
-Static function STRUCTUREBUILDER(cNome)
+/*/{Protheus.doc} STRUCTUREBUILDER
+Funcao que monta a estrutura do relatorio
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 13/12/2022
+@see https://tdn.totvs.com/display/public/framework/TRSection
+/*/
+Static function STRUCTUREBUILDER(cName)
     Local oReport   := NIL
     Local oSection1 := NIL
     Local oSection2 := NIL
 
-    oReport := TReport():New(cNome)
+    oReport := TReport():New(cName, "Relatório de pedidos por clientes",cName,{|oReport| QUERYBUILDER(oReport)})
 
+    oReport:SetPortrait() //Define a oreitação do relatorio como retrato.
 
+    oSection1 := TRSection():New(oReport, "Produtos",{"SA1"}, NIL,.F.,.T.)
+    TRCell():New(oSection1,"A1_COD"  ,"TEMP","CODIGO" , "@!" ,40 )
+    TRCell():New(oSection1,"A1_NOME" ,"TEMP","NOME"   , "@!" ,200)
+
+    oSection2:= TRSection():New(oReport, "Produtos",{"SB1"}, NIL, .F.,.T.)
+    TRCell():New(oSection2,"C5_NUM" ,"TEMP","PEDIDO","@!",30)
+    TRCell():New(oSection2,"B1_DESC","TEMP","Descrição","@!",100)
+    TRCell():New(oSection2,"C6_PRCVEN","TEMP","Prec. Vend","@E 999999.99",20)
+    TRCell():New(oSection2,"C6" ,"TEMP","Quantidade","@E 999999.99",30)
+
+    oSection1:SetPageBreak(.F.) //Quebra de secao
 
 return oReport
