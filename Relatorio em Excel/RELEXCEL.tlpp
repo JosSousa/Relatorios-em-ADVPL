@@ -1,0 +1,14 @@
+#INCLUDE 'PROTHEUS.ch'
+#INCLUDE 'Topconn.ch'
+
+/*/{Protheus.doc} RELEXCEL
+Funcao que gera um relatorio em Excel
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 19/12/2022
+/*/
+User Function RELEXCEL()
+
+
+retunr
