@@ -62,3 +62,24 @@ Static Function QUERYBUILDER()
     DbUseArea(.T.,"TOPCONN", TCGENQRY(,, cQuery ),'TR1',.F.,.T.)
 
 Return
+
+
+/*/{Protheus.doc} STRUCTEXCEL
+Funcao que estrutura o arquivo Excel
+@type function
+@version  1.0
+@author Josue Oliveira
+@since 19/12/2022
+@see https://tdn.totvs.com/display/tec/DBGoTop
+/*/
+Static Function STRUCTEXCEL()
+
+    Local oExcel  := FWMSEXCEL():New()
+    Local lOk     := .F.
+    Local cArq    := ""
+    Local cDirTmp := "C:\TOTVS12133\Relatorios\"
+
+    TR1 -> (DbGoTop())
+
+
+Return
