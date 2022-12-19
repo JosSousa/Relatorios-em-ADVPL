@@ -7,8 +7,58 @@ Funcao que gera um relatorio em Excel
 @version  1.0
 @author Josue Oliveira
 @since 19/12/2022
+@see https://solutio.inf.br/processa/
 /*/
 User Function RELEXCEL()
 
+    Processa({|| QUERYBUILDER()},, "Processando...")
 
-retunr
+Return
+
+/*/{Protheus.doc} QUERYBUILDER
+Funcao que monta a query de consulta SQL
+@type function
+@version 1.0
+@author Josue Oliveira
+@since 19/12/2022
+@see https://tdn.totvs.com/display/public/framework/MPSysSqlName
+@see https://terminaldeinformacao.com/knowledgebase/fwxfilial/
+@see https://masteradvpl.com.br/index.php/forum/loboguara/17831-dbselectarea
+@see https://tdn.totvs.com/display/tec/DBCloseArea
+@see https://tdn.totvs.com/display/public/framework/ChangeQuery
+@see https://tdn.totvs.com/pages/releaseview.action?pageId=23889335
+/*/
+Static Function QUERYBUILDER()
+
+    Local cQuery := ""
+
+    //Consulta SQL
+    cQuery := " SELECT "													
+	cQuery += " 	SB1.B1_COD AS CODIGO, "											
+	cQuery += " 	SB1.B1_DESC AS DESCRICAO, "										
+	cQuery += " 	SB1.B1_TIPO AS TIPO, "										
+	cQuery += " 	SBM.BM_GRUPO GRUPO, "										
+	cQuery += " 	SBM.BM_DESC BM_DESCRICAO, "										
+	cQuery += " 	SBM.BM_PROORI BM_ORIGEM"										
+	cQuery += " FROM "													
+	cQuery += " 	"+RetSQLName('SB1')+" SB1 "							
+	cQuery += " 	INNER JOIN "+RetSQLName('SBM')+" SBM ON ( "	//
+	cQuery += " 		SBM.BM_FILIAL = '"+FWxFilial('SBM')+"' "		
+	cQuery += " 		AND SBM.BM_GRUPO = B1_GRUPO "					
+	cQuery += " 		AND SBM.D_E_L_E_T_='' "							
+	cQuery += " 	) "														
+	cQuery += " WHERE "													
+	cQuery += " SB1.B1_FILIAL = '"+FWxFilial('SBM')+"' "			
+	cQuery += " AND SB1.D_E_L_E_T_ = '' "							
+	cQuery += " ORDER BY "												
+	cQuery += " SB1.B1_COD "
+
+        If SELECT ("TR1") <> 0
+            DbSelectArea("TR1")
+            DbCloseArea()
+        EndIf
+
+    cQuery := ChangeQuery(cQuery)
+    DbUseArea(.T.,"TOPCONN", TCGENQRY(,, cQuery ),'TR1',.F.,.T.)
+
+Return
