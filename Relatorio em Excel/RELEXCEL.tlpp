@@ -12,9 +12,11 @@ Funcao que gera um relatorio em Excel
 /*/
 User Function RELEXCEL()
 
-    Processa({|| QUERYBUILDER()},, "Processando...")
-		//Mostra mensagem de processamento para o usuario
-		MsAguarda({|| STRUCTEXCEL()},,"O Arqvuivo Excel está sendo gerado...")
+  Processa({|| QUERYBUILDER()},, "Processando...")
+	//Mostra mensagem de processamento para o usuario
+	MsAguarda({|| STRUCTEXCEL()},,"O Arqvuivo Excel está sendo gerado...")
+	dbSelectArea("TR1")
+	dbCloseArea()
 
 Return
 
