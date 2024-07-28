@@ -4,7 +4,7 @@
 /*/{Protheus.doc} RELEXCEL
 Funcao que gera um relatorio em Excel
 @type function
-@version  1.1.0
+@version  1.1.1
 @author Josue Oliveira
 @since 19/12/2022
 @see https://solutio.inf.br/processa/
@@ -14,7 +14,7 @@ User Function RELEXCEL()
 
   Processa({|| QUERYBUILDER()},, "Processando...")
 	//Mostra mensagem de processamento para o usuario
-	MsAguarda({|| STRUCTEXCEL()},,"O Arqvuivo Excel está sendo gerado...")
+	MsAguarde({|| STRUCTEXCEL()},,"O Arquivo Excel está sendo gerado...")
 	dbSelectArea("TR1")
 	dbCloseArea()
 
