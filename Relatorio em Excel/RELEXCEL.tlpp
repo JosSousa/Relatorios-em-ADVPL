@@ -15,7 +15,7 @@ User Function RELEXCEL()
   Processa({|| QUERYBUILDER()},, "Processando...")
 	//Mostra mensagem de processamento para o usuario
 	MsAguarde({|| STRUCTEXCEL()},,"O Arquivo Excel está sendo gerado...")
-	dbSelectArea("TR1")
+	DbSelectArea("TR1")
 	dbCloseArea()
 
 Return
@@ -48,14 +48,13 @@ Static Function QUERYBUILDER()
 	cQuery += " 	SBM.BM_PROORI BM_ORIGEM"										
 	cQuery += " FROM "													
 	cQuery += " 	"+RetSQLName('SB1')+" SB1 "							
-	cQuery += " 	INNER JOIN "+RetSQLName('SBM')+" SBM ON ( "	//
+	cQuery += " 	INNER JOIN "+RetSQLName('SBM')+" SBM ON ( "
 	cQuery += " 		SBM.BM_FILIAL = '"+FWxFilial('SBM')+"' "		
 	cQuery += " 		AND SBM.BM_GRUPO = B1_GRUPO "					
 	cQuery += " 		AND SBM.D_E_L_E_T_='' "							
 	cQuery += " 	) "														
 	cQuery += " WHERE "													
-	cQuery += " SB1.B1_FILIAL = '"+FWxFilial('SBM')+"' "			
-	cQuery += " AND SB1.D_E_L_E_T_ = '' "							
+	cQuery += " SB1.D_E_L_E_T_ = '' "							
 	cQuery += " ORDER BY "												
 	cQuery += " SB1.B1_COD "
 
@@ -65,7 +64,7 @@ Static Function QUERYBUILDER()
   EndIf
 
   cQuery := ChangeQuery(cQuery)
-  DbUseArea(.T.,"TOPCONN", TCGENQRY(,, cQuery ),'TR1',.F.,.T.)
+  DbUseArea(.T.,"TOPCONN", TCGENQRY(,,cQuery),'TR1',.F.,.T.)
 
 Return
 
@@ -73,7 +72,7 @@ Return
 /*/{Protheus.doc} STRUCTEXCEL
 Funcao que estrutura o arquivo Excel
 @type function
-@version  1.1.0
+@version  1.1.1
 @author Josue Oliveira
 @since 19/12/2022
 @see https://tdn.totvs.com/display/tec/DBGoTop
@@ -86,11 +85,11 @@ Static Function STRUCTEXCEL()
   Local cArq    := ""
   Local cDirTmp := "C:\temp\"
 
-	dbSeletArea("TR1")
+	dbSelectArea("TR1")
   TR1 -> (DbGoTop())
 	oExcel:AddWorkSheet("PRODUTOS")
 	oExcel:AddTable("PRODUTOS","TESTE")
-	oExcel:AddTable("PRODUTOS","TESTE","CODIGO",1,1)
+	oExcel:AddColumn("PRODUTOS","TESTE","CODIGO",1,1)
 	oExcel:AddColumn("PRODUTOS","TESTE","DESCRICAO",1,1)
 	oExcel:AddColumn("PRODUTOS","TESTE","TIPO",1,1)
 	oExcel:AddColumn("PRODUTOS","TESTE","GRUPO",1,1)
@@ -98,14 +97,14 @@ Static Function STRUCTEXCEL()
 	oExcel:AddColumn("PRODUTOS","TESTE","BM_ORIGEM",1,1)
 
 	While TR1->(!EOF())
-		oExcel:AddRow("PRODUTOS","TESTE",;
-		(TR1->(CODIGO)),;
-		(TR1->(DESCRICAO)),;
-		(TR1->(TIPO)),;
-		(TR1->(GRUPO)),;
-		(TR1->(BM_DESCRICAO)),;
-		(TR1->(BM_ORIGEM)))
-		lOk := .T.
+		oExcel:AddRow("PRODUTOS","TESTE",{TR1->(CODIGO),;
+		TR1->(DESCRICAO),;
+		TR1->(TIPO),;
+		TR1->(GRUPO),;
+		TR1->(BM_DESCRICAO),;
+		TR1->(BM_ORIGEM)})
+		lOK := .T.
+		TR1->(dbSkip())
 	EndDo
 
 	oExcel:Activate()
